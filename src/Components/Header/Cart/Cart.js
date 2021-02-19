@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Cart = (props) => {
-    console.log(props)
+   
     const cart=props.item
     let price=0;
     let total=0;
@@ -28,18 +29,15 @@ const Cart = (props) => {
         <div>
             <h4>Order Summary</h4>
            
-            <h5>Items Ordered:<span>{props.item.length}</span></h5>
-            <p><strong>Product - prize: ${price}</strong></p>
+            <p>Items Ordered:<span>{props.item.length}</span></p>
+            <p>Product - prize: ${price}</p>
             <p>Shipping Cost: ${cost}</p>
             <p>Tax + Vat : ${tax}</p>
-            <h4>Total - Prize: {total +cost +tax}</h4>
-            <h1>Selected items:</h1>
-            {
-                cart.map(cart=>{
-                    return <p><small>  {cart.name}</small>
-                    </p>
-                })
-            }
+            <p>Total - Prize: {total +cost +tax}</p>
+            <br/>
+            <Link to="/review">
+            <button className="main-button">Review-Order</button>  
+            </Link>
 
         </div>
     );
