@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import fakeData from '../../fakeData';
-import { getDatabaseCart, processOrder, removeFromDatabaseCart } from '../../utilities/databaseManager';
+
+
+import { getDatabaseCart,  removeFromDatabaseCart } from '../../utilities/databaseManager';
 import Cart from '../Header/Cart/Cart';
-import {Link} from 'react-router-dom'
+import { useHistory} from 'react-router-dom'
 import ReviewItem from '../ReviewItem/ReviewItem';
 import Sleep from '../../images/sleep.jpg'
 
 const Review = () => {
+  
     const [cart,setCart]=useState([])
     const [orderPlaced,setOrderPlaced]=useState(false)
+    const history=useHistory()
+     const handleProceedCheckOut=()=>{
+       
+       history.push('/shipment')
+     }
     const removeProduct=(productKey)=>{
       
         const newCart=cart.filter(pd=>pd.key!==productKey)
@@ -16,24 +23,21 @@ const Review = () => {
        setCart(newCart)
 
      }
-     const handlePlaceOrder=()=>{
-       console.log('clicked')
-       setCart([])
-       setOrderPlaced(true)
-       processOrder()
-     }
+     
     useEffect(()=>{
       const savedCart=getDatabaseCart()
       const productKeys=Object.keys(savedCart)
-     
-      
-      const cartProducts=productKeys.map(key=>{
-
-          let product=fakeData.find(pd=> pd.key===key);
-          product.quantity=savedCart[key];
-        return product
+      fetch('http://localhost:4000/productByKeys',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(productKeys)
       })
-      setCart(cartProducts);
+      .then(res=>res.json())
+      .then(data=>setCart(data))
+      
+      
     },[])
     
     return (
@@ -54,9 +58,9 @@ const Review = () => {
         </div>
         <div className="cart-container">
        <Cart cart={cart}>
-       <Link to="/review">
-            <button onClick={handlePlaceOrder} className="main-button">Place-Order</button>  
-            </Link>
+     
+            <button onClick={handleProceedCheckOut} className="main-button">Proceed Checkout</button>  
+           
        </Cart>
         </div>
         </div>

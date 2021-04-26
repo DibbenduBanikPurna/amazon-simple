@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Product from '../Header/Product/Product';
-import fakeData from '../../fakeData'
+import CircularProgress from '@material-ui/core/CircularProgress';
 const ProductDetail = () => {
+    const [product,setProduct]=useState({})
+    document.title="product-detail"
+    const [loading,setLoading]=useState(true)
     const {productKey}=useParams()
-    const product=fakeData.find(pd=>pd.key===productKey)
+    useEffect(()=>{
+        fetch(`http://localhost:4000/product/${productKey}`)
+        .then(res=>res.json())
+        .then(data=>
+            {
+            setProduct(data)
+            setLoading(false)
+            })
+
+    },[productKey])
+ 
     return (
         <div>
-                <h2>Your product  Details</h2>
+            { loading ?  <CircularProgress color="secondary" />: 
+               
                 <Product addToCart={false} product={product}/>
+    }
         </div>
     );
 };

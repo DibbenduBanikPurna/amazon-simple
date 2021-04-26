@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const ReviewItem = (props) => {
-   
+  document.title="review"
     const {name,quantity,price}=props.cart;
     
     return (

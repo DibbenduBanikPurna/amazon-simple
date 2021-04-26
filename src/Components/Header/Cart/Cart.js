@@ -10,7 +10,8 @@ const Cart = (props) => {
     for(let i=0;i<cart.length;i++){
         let element=cart[i]
         price=(element.price)
-        total=Math.floor(total + element.price*element.quantity)
+       
+        total=Math.floor(total + element.price*element.quantity|| 1)
        
 
     }

@@ -1,24 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import  fakeData from '../../../fakeData'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { addToDatabaseCart, getDatabaseCart } from '../../../utilities/databaseManager';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import './Shop.css'
 import { Link } from 'react-router-dom';
 const Shop = () => {
-    const first10=fakeData.slice(0,10)
- const [products,setProduct]=useState(first10)
+   document.title="shop-more"
+ const [products,setProduct]=useState([])
 const [cart,setCart]=useState([])
+const [search,setSearch]=useState('')
+
+        useEffect(()=>{
+            fetch('http://localhost:4000/products?search='+search)
+            .then(res=>res.json())
+            .then(data=>setProduct(data))
+
+        },[search])
+
     useEffect(()=>{
         const savedCart=getDatabaseCart()
         const productKeys=Object.keys(savedCart)
-        const previousCart=productKeys.map(existingKey=>{
-            const product=fakeData.find(pd=>pd.key===existingKey)
-            product.quantity=savedCart[existingKey]
-            return product
-        })
-        setCart(previousCart)
+       // console.log(products,productKeys)
+       fetch('http://localhost:4000/productByKeys',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(productKeys)
+      })
+      .then(res=>res.json())
+      .then(data=>setCart(data))
     },[])
+
+    
  function handleAddProduct(product){
     const sameProduct=cart.find(pd=>pd.key===product.key)
    
@@ -41,9 +56,14 @@ const [cart,setCart]=useState([])
     addToDatabaseCart(product.key,count)
     
  }
+ const handleSearch=(e)=>{
+    setSearch(e.target.value)
+ }
     return (
         <div className="shop-container">
             <div className="product-container">
+                <input className="product-search" onBlur={handleSearch} type="text" placeholder="search-here"/>
+                {products.length===0 &&  <CircularProgress color="secondary" />}
             {products.map(product=>{
                       return <Product key={product.key}
                        addToCart={true}  
